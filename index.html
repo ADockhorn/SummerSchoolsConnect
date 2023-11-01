@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('fonts/Roboto-Regular.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body, html {
+            overflow: hidden;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            border-radius: 2px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: white;
+            width: calc(100% - 32px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .card a img {
+            width: 50px; /* Adjust as needed */
+            height: auto;
+        }
+
+        .webpage {
+            width: 40px; /* Adjust as needed */
+            height: 40px; /* Adjust as needed */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .info {
+            width: 25px; /* Adjust as needed */
+            height: 25px; /* Adjust as needed */
+            padding-left: 8px;
+            padding-top: 10px;
+            padding-right: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card h3 {
+            margin-top: 0;
+        }
+        
+        .card p {
+            margin: 0;
+        }
+
+        .card a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            font-size: small;
+        }
+
+        #container {
+            display: flex;
+        }
+
+        #map {
+            width: 70%;
+            height: 80vh; /* Adjust as needed */
+        }
+
+        #sidebar {
+            width: 30%;
+            height: 80vh; /* Adjust as needed */
+            overflow: hidden;
+        }
+
+        #search {
+            width: 100%;
+            padding: 10px;
+            border-radius: 25px; 
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            box-shadow: none; 
+        }
+
+        #cardsContainer {
+            width: 100%;
+            height: 70vh; /* Adjust as needed */
+            overflow-y: auto;
+        }
+
+        #cardsContainer::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #cardsContainer::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #cardsContainer::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        #cardsContainer::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        #cardsContainer {
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
+
+        .logo {
+            position: relative;
+            z-index: 1; /* Add this line */
+        }
+
+        .logo, .slogan {
+            font-family: "Formata-regular";
+            font-size: 16px;
+        }    
+        .slogan {
+            text-align: left;
+            font-size: 20px;
+            color: rgb(0, 102, 153);
+        }
+
+        #dateFilter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+
+        footer {
+            background-color: rgb(51, 51, 51);
+            color: white;
+            text-align: center;
+            position: fixed;
+            padding-left: 10%;
+            padding-right: 10%;
+            left: 0;
+            bottom: 0;
+            width: 80%;
+            font-size: small;
+        }
+
+        body {
+            padding-left: 10%; /* Adjust as needed */
+            padding-right: 10%; /* Adjust as needed */
+        }
+
+        header {
+            position: relative;
+            height: 100px; /* Adjust as needed */
+            background-image: url('img/header.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <!-- Logo Content
+            ============================================= -->
+            <a href="https://www.ieee.org/">
+            <img style="height: 60px; padding-top: 50px;" src="img/summer schools connect-logos_transparent.png" alt="IEEE - Advancing Technology for Humanity" title="IEEE - Advancing Technology for Humanity" class="img-responsive">
+            </a>
+            <!-- #logo-content end -->
+        </div>
+    </header>
+
+    <div id="container">
+        <div id="sidebar">
+            <input type="text" id="search" placeholder="Search events">
+            <form id="dateFilter">
+                <input type="date" id="startDate">
+                <input type="date" id="endDate">
+            </form>
+            <div id="cardsContainer">
+                <div id="cards"></div>
+            </div>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <footer>
+        <p>This project has been created as demonstrator for the 2023 IEEE Volunteer Leadership Training (VoLT) Program. It does not represent an official product of IEEE.
+            Team 4 "Mavericks" consists of Alvin Chin, Alexander Dockhorn, Priyanka Brahmaiah Veeramosu, Gabrielle Silva, Kevin Thompson, and Stephen Okwiri.
+            We would like to thank the organizers of this program, specifically our mentors for the continuous support, and the chance to work on this project.
+            <br>
+            To built this demonstrator we have used the following assets: <a href="https://www.flaticon.com/free-icons/register" title="register icons">Register icons created by Pixel perfect - Flaticon</a> and <a href="https://www.flaticon.com/free-icons/webpage" title="webpage icons">Webpage icons created by Andrean Prabowo - Flaticon</a>
+        </p>
+    </footer>
+</body>
+
+<script>
+    var map = L.map('map').setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        minZoom: 2
+    }).addTo(map);
+
+    var pointsOfInterest = [
+        { 
+            name: '2023 IEEE CIS Summer School on Explainable Image and Text Processing',
+            location: 'Suhar, Oman',
+            coordinates: [24.3445577, 56.7424766],
+            startDate: '2023-06-19',
+            endDate: '2023-06-22',
+            info: ''
+        },
+        { 
+            name: '2023 IEEE CIS Summer School on Artificial Intelligence and Machine Learning for Engineering and Social Science Research',
+            location: 'MNIT Jaipur, India (hybrid)',
+            coordinates: [26.9154576, 75.8189817],
+            startDate: '2023-07-11',
+            endDate: '2023-07-15',
+            info: ''
+        },
+        { 
+            name: '2023 IEEE CIS Summer School on Computational Intelligence: Theory and Applications',
+            location: 'Jaffna, Sri Lanka',
+            coordinates: [9.665093, 80.0093029],
+            startDate: '2023-07-12',
+            endDate: '2023-07-14',
+            info: ''
+        },
+        { 
+            name: '2023 IEEE CIS Summer School on Computational Advances in Deep Learning and Applications (CADLA)',
+            location: 'Prayagraj, India',
+            coordinates: [25.4381302, 81.8338005],
+            startDate: '2023-07-17',
+            endDate: '2023-07-21',
+            info: ''
+        },
+        { 
+            name: '2023 IEEE CIS Summer School on Computational Intelligence for Game Development',
+            location: 'Kamloops, Canada',
+            coordinates: [50.674522, -120.327271],
+            startDate: '2023-07-17',
+            endDate: '2023-07-21',
+            info: ''
+        },
+        { 
+            name: '2023 IEEE CIS Summer School on Computational Intelligence',
+            location: 'Zhengzhou, China',
+            coordinates: [34.746613, 113.625328],
+            startDate: '2023-07-22',
+            endDate: '2023-07-25',
+            info: ''
+        },
+        { 
+            name: '2023 IEEE CIS Summer School on Advances in Computational Intelligence',
+            location: 'Shenzhen, China',
+            coordinates: [22.543097, 114.057861],
+            startDate: '2023-08-24',
+            endDate: '2023-08-27',
+            info: ''
+        },
+        { 
+            name: '2023 IEEE CIS Summer School on Applied AI in Unmanned Vehicle',
+            location: 'Punjab, India',
+            coordinates: [31.147129, 75.341217],
+            startDate: '2023-08-28',
+            endDate: '2023-09-01',
+            info: ''
+        },
+        { 
+            name: '2023 IEEE School on Computational Intelligence and Robotics',
+            location: 'Morelos, México',
+            coordinates: [22.861441, -102.609230],
+            startDate: '2023-10-16',
+            endDate: '2023-10-21',
+            info: ''
+        }
+    ];
+
+
+
+
+    var markers = L.layerGroup().addTo(map);
+    var items = []
+    updateMarkers(pointsOfInterest);
+
+    function updateMarkers(points) {
+        markers.clearLayers();
+        items = [];
+        points.forEach(function(point, index) {
+            var marker = L.marker(point.coordinates).addTo(markers)
+                .bindPopup('<div><h3>' + point.name + '</h3><p>' + point.info + ' <b>When:</b> ' +  point.startDate + " to " + point.endDate + '</p> <p><b>Where:</b> ' + point.location + '</div>')
+                /*.openPopup();*/
+            marker.index = index;
+            items.push(marker);
+        });
+    }
+
+    document.getElementById('startDate').addEventListener('change', filterPoints);
+    document.getElementById('endDate').addEventListener('change', filterPoints);
+    document.getElementById('search').addEventListener('input', filterPoints);
+
+
+    function filterPoints() {
+        var startDate = document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value) : null;
+        var endDate = document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value) : null;
+        var searchTerm = document.getElementById('search').value.toLowerCase();
+        var filteredPoints = pointsOfInterest.filter(function(point) {
+            var eventStartDate = new Date(point.startDate);
+            var eventEndDate = new Date(point.endDate);
+            return (startDate ? eventStartDate >= startDate : true) && 
+                (endDate ? eventEndDate <= endDate : true) && 
+                (point.name.toLowerCase().includes(searchTerm) || point.location.toLowerCase().includes(searchTerm));
+        });
+        updateCards(filteredPoints);
+        updateMarkers(filteredPoints);
+    }
+
+    function updateCards(points) {
+        var cardsDiv = document.getElementById('cards');
+        cardsDiv.innerHTML = ''; 
+        points.forEach(function(point, index) {
+            var card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = '<div><h3>' + point.name + '</h3><p>' + point.info + ' <b>When:</b> ' +  point.startDate + " to " + point.endDate + '</p> <p><b>Where:</b> ' + point.location + '</div>' +
+                '<div class="data"><a href="https://cis.ieee.org/activities/educational-activites/summer-schools"><img class="webpage" src="img/browser.png" alt="Webpage"><p>Webpage</p></a><a href="https://cis.ieee.org/activities/educational-activites/summer-schools"><img class="info" src="img/edit.png" alt="Info"><p>Register</p></a></div>';
+            card.addEventListener('mouseover', function() {
+                highlightMarker(index);
+            });
+            cardsDiv.appendChild(card);
+        });
+    }
+
+    function highlightMarker(index) {
+        // Get the marker at the given index.
+        var marker = items[index];
+
+        // Change the color of the marker to red.
+        marker.openPopup();
+    }
+    updateCards(pointsOfInterest);
+</script>
+
+
+</html>
