@@ -3,200 +3,8 @@
 <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <style>
-        @font-face {
-            font-family: 'Roboto';
-            src: url('fonts/Roboto-Regular.ttf') format('truetype');
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
-
-        body, html {
-            overflow: hidden;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .card {
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-            border-radius: 2px;
-            padding: 16px;
-            margin-bottom: 16px;
-            background-color: white;
-            width: calc(100% - 32px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-        }
-
-        .card a img {
-            width: 50px; /* Adjust as needed */
-            height: auto;
-        }
-
-        .webpage {
-            width: 40px; /* Adjust as needed */
-            height: 40px; /* Adjust as needed */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .info {
-            width: 25px; /* Adjust as needed */
-            height: 25px; /* Adjust as needed */
-            padding-left: 8px;
-            padding-top: 10px;
-            padding-right: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .card h3 {
-            margin-top: 0;
-        }
-        
-        .card p {
-            margin: 0;
-        }
-
-        .card a {
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-            font-size: small;
-        }
-
-        #container {
-            display: flex;
-        }
-
-        #map {
-            width: 70%;
-            height: 80vh; /* Adjust as needed */
-        }
-
-        #sidebar {
-            width: 30%;
-            height: 80vh; /* Adjust as needed */
-            overflow: hidden;
-        }
-
-        #search {
-            width: 100%;
-            padding: 10px;
-            border-radius: 25px; 
-            box-sizing: border-box;
-            margin-bottom: 10px;
-            box-shadow: none; 
-        }
-
-        #cardsContainer {
-            width: 100%;
-            height: 70vh; /* Adjust as needed */
-            overflow-y: auto;
-        }
-
-        #cardsContainer::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        #cardsContainer::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        #cardsContainer::-webkit-scrollbar-thumb {
-            background: #888;
-        }
-
-        #cardsContainer::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        #cardsContainer {
-            scrollbar-width: thin;
-            scrollbar-color: #888 #f1f1f1;
-        }
-
-        .logo {
-            position: relative;
-            z-index: 1; /* Add this line */
-        }
-
-        .logo, .slogan {
-            font-family: "Formata-regular";
-            font-size: 16px;
-        }    
-        .slogan {
-            text-align: left;
-            font-size: 20px;
-            color: rgb(0, 102, 153);
-        }
-
-        #dateFilter {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 10px;
-        }
-
-        footer {
-            background-color: rgb(51, 51, 51);
-            color: white;
-            text-align: center;
-            position: fixed;
-            padding-left: 10%;
-            padding-right: 10%;
-            left: 0;
-            bottom: 0;
-            width: 80%;
-            font-size: small;
-        }
-
-        body {
-            padding-left: 10%; /* Adjust as needed */
-            padding-right: 10%; /* Adjust as needed */
-        }
-
-        header {
-            position: relative;
-            height: 100px; /* Adjust as needed */
-            background-image: url('img/header.jpg');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-
-
-        header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-        }
-
-
-    </style>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
@@ -214,10 +22,15 @@
     <div id="container">
         <div id="sidebar">
             <input type="text" id="search" placeholder="Search events">
+            
+
+            
             <form id="dateFilter">
                 <input type="date" id="startDate">
                 <input type="date" id="endDate">
             </form>
+            <div style="display: block; width: fit-content; margin-left: auto; margin-right: auto;"> Your event is not listed here? <button class="button-8" role="button" onclick="window.open('https://app.smartsheet.com/b/form/c6f975e5fe724378834be279cce42ac8')">register new event</button>
+            </div>
             <div id="cardsContainer">
                 <div id="cards"></div>
             </div>
@@ -236,6 +49,8 @@
 </body>
 
 <script>
+    
+
     var map = L.map('map').setView([0, 0], 2);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -250,6 +65,7 @@
             coordinates: [24.3445577, 56.7424766],
             startDate: '2023-06-19',
             endDate: '2023-06-22',
+            tags: ["IEEE CIS", "Scholarship"],
             info: ''
         },
         { 
@@ -258,6 +74,7 @@
             coordinates: [26.9154576, 75.8189817],
             startDate: '2023-07-11',
             endDate: '2023-07-15',
+            tags: ["IEEE CIS"],
             info: ''
         },
         { 
@@ -266,6 +83,7 @@
             coordinates: [9.665093, 80.0093029],
             startDate: '2023-07-12',
             endDate: '2023-07-14',
+            tags: ["IEEE CIS", "Scholarship"],
             info: ''
         },
         { 
@@ -274,6 +92,7 @@
             coordinates: [25.4381302, 81.8338005],
             startDate: '2023-07-17',
             endDate: '2023-07-21',
+            tags: ["IEEE CIS"],
             info: ''
         },
         { 
@@ -282,6 +101,7 @@
             coordinates: [50.674522, -120.327271],
             startDate: '2023-07-17',
             endDate: '2023-07-21',
+            tags: ["IEEE CIS", "Travel Grant"],
             info: ''
         },
         { 
@@ -290,6 +110,7 @@
             coordinates: [34.746613, 113.625328],
             startDate: '2023-07-22',
             endDate: '2023-07-25',
+            tags: ["IEEE CIS"],
             info: ''
         },
         { 
@@ -298,6 +119,7 @@
             coordinates: [22.543097, 114.057861],
             startDate: '2023-08-24',
             endDate: '2023-08-27',
+            tags: ["IEEE CIS", "Travel Grant"],
             info: ''
         },
         { 
@@ -306,6 +128,7 @@
             coordinates: [31.147129, 75.341217],
             startDate: '2023-08-28',
             endDate: '2023-09-01',
+            tags: ["IEEE CIS"],
             info: ''
         },
         { 
@@ -314,15 +137,18 @@
             coordinates: [22.861441, -102.609230],
             startDate: '2023-10-16',
             endDate: '2023-10-21',
+            tags: ["IEEE CIS", "Scholarship"],
             info: ''
         }
     ];
 
 
 
-
     var markers = L.layerGroup().addTo(map);
     var items = []
+    var tagsDict = {};
+    var elementsInDict = 0;
+    var colors = ["color1", "color2", "color3", "color4", "color5"];
     updateMarkers(pointsOfInterest);
 
     function updateMarkers(points) {
@@ -334,14 +160,23 @@
                 /*.openPopup();*/
             marker.index = index;
             items.push(marker);
+            if (point.tags) {
+                point.tags.forEach(function(tag) {
+                    if (!tagsDict[tag]) {
+                        tagsDict[tag] = colors[elementsInDict%colors.length];
+                        elementsInDict++;
+                    } 
+                });
+            } 
         });
     }
+    console.log(tagsDict)
 
     document.getElementById('startDate').addEventListener('change', filterPoints);
     document.getElementById('endDate').addEventListener('change', filterPoints);
     document.getElementById('search').addEventListener('input', filterPoints);
 
-
+ 
     function filterPoints() {
         var startDate = document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value) : null;
         var endDate = document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value) : null;
@@ -351,7 +186,7 @@
             var eventEndDate = new Date(point.endDate);
             return (startDate ? eventStartDate >= startDate : true) && 
                 (endDate ? eventEndDate <= endDate : true) && 
-                (point.name.toLowerCase().includes(searchTerm) || point.location.toLowerCase().includes(searchTerm));
+                (point.name.toLowerCase().includes(searchTerm) || point.location.toLowerCase().includes(searchTerm) || point.tags.join(" ").toLowerCase().includes(searchTerm));
         });
         updateCards(filteredPoints);
         updateMarkers(filteredPoints);
@@ -363,8 +198,18 @@
         points.forEach(function(point, index) {
             var card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = '<div><h3>' + point.name + '</h3><p>' + point.info + ' <b>When:</b> ' +  point.startDate + " to " + point.endDate + '</p> <p><b>Where:</b> ' + point.location + '</div>' +
+            var innerHTML = '<div><div><h3>' + point.name + '</h3>';
+            if (point.tags) {
+                var tag_information = "";
+                point.tags.forEach(function(tag) {
+                    tag_information +=  "<a class=" +tagsDict[tag] + '>' + tag + '</a>';
+                });
+                innerHTML += '<div class="tags">' + tag_information + '</div>';
+            }
+            innerHTML += '</div>';
+            innerHTML += '<p>' + point.info + ' <b>When:</b> ' +  point.startDate + " to " + point.endDate + '</p> <p><b>Where:</b> ' + point.location + '</div>' +
                 '<div class="data"><a href="https://cis.ieee.org/activities/educational-activites/summer-schools"><img class="webpage" src="img/browser.png" alt="Webpage"><p>Webpage</p></a><a href="https://cis.ieee.org/activities/educational-activites/summer-schools"><img class="info" src="img/edit.png" alt="Info"><p>Register</p></a></div>';
+            card.innerHTML = innerHTML;
             card.addEventListener('mouseover', function() {
                 highlightMarker(index);
             });
